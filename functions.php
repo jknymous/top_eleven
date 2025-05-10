@@ -27,7 +27,7 @@ function validatePlayerData(array $input): array {
     }
 
     $umur = intval($input['umur'] ?? 0);
-    if ($umur < 10 || $umur > 40) {
+    if ($umur < 18 || $umur > 40) {
         $errors[] = 'Umur harus antara 10 dan 40.';
     }
 

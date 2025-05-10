@@ -15,14 +15,25 @@ $kelas_options = range(1,6);
 <h1 class="text-4xl font-extrabold text-blue-700 mb-8 select-none text-center">Tambah Pemain</h1>
 
 <?php if ($success): ?>
-    <div id="success-notification" class="mb-6 p-4 max-w-3xl mx-auto text-green-800 bg-green-200 rounded">
+    <div id="success-notification" class="fixed top-5 right-5 z-50 max-w-sm bg-green-600 text-white px-6 py-4 rounded shadow-lg opacity-0 transform translate-x-4 transition-opacity transition-transform duration-300">
         <?= $success ?>
     </div>
     <script>
-        setTimeout(() => {
-            const notif = document.getElementById('success-notification');
-            if (notif) notif.style.display = 'none';
-        }, 4000); // disappears after 4 seconds
+        const notif = document.getElementById('success-notification');
+        if (notif) {
+            // Show notification with fade-in
+            requestAnimationFrame(() => {
+                notif.classList.remove('opacity-0', 'translate-x-4');
+                notif.classList.add('opacity-100', 'translate-x-0');
+            });
+            // Hide notification after 4 seconds with fade-out
+            setTimeout(() => {
+                notif.classList.remove('opacity-100', 'translate-x-0');
+                notif.classList.add('opacity-0', 'translate-x-4');
+                // Remove from DOM after transition
+                setTimeout(() => notif.remove(), 300);
+            }, 4000);
+        }
     </script>
 <?php endif; ?>
 
@@ -56,8 +67,8 @@ $kelas_options = range(1,6);
             type="number"
             id="umur"
             name="umur"
-            min="10"
-            max="60"
+            min="18"
+            max="40"
             value="<?= old('umur') ?>"
             required
             class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -71,7 +82,7 @@ $kelas_options = range(1,6);
             id="ovr"
             name="ovr"
             min="0"
-            max="100"
+            max="240"
             value="<?= old('ovr') ?>"
             required
             class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
