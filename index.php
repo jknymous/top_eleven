@@ -33,6 +33,42 @@ if ($page === 'tambah-pemain' && $_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 if ($page === 'pemain') {
+    // Handle POST actions: update or delete
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (isset($_POST['action'])) {
+            $action = $_POST['action'];
+
+            if ($action === 'update') {
+                // collect, validate update data
+                $id = intval($_POST['id'] ?? 0);
+                $nama = trim($_POST['nama'] ?? '');
+                $umur = intval($_POST['umur'] ?? 0);
+                $ovr = intval($_POST['ovr'] ?? 0);
+                $posisi = $_POST['posisi'] ?? '';
+                $keahlian = intval($_POST['keahlian'] ?? -1);
+                $gaya_main = $_POST['gaya_main'] ?? '';
+                $kelas = intval($_POST['kelas'] ?? 0);
+
+                $input = compact('nama', 'umur', 'ovr', 'posisi', 'keahlian', 'gaya_main', 'kelas');
+                $errors = validatePlayerData($input);
+
+                if (!$errors && $id > 0) {
+                    $stmt = $pdo->prepare('UPDATE players SET nama=?, umur=?, ovr=?, posisi=?, keahlian=?, gaya_main=?, kelas=? WHERE id=?');
+                    $stmt->execute([$nama, $umur, $ovr, $posisi, $keahlian, $gaya_main, $kelas, $id]);
+                    $success = 'Pemain berhasil diperbarui.';
+                }
+
+            } elseif ($action === 'delete') {
+                $id = intval($_POST['id'] ?? 0);
+                if ($id > 0) {
+                    $stmt = $pdo->prepare('DELETE FROM players WHERE id=?');
+                    $stmt->execute([$id]);
+                    $success = 'Pemain berhasil dihapus.';
+                }
+            }
+        }
+    }
+    // Fetch players
     $players = fetchPlayers($pdo);
 }
 
