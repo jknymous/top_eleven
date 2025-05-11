@@ -30,28 +30,6 @@ function calculateRecommendation($player) {
         $score += 1; // Add points for having a playing style
     }
 
-    // Class scoring
-    switch ($player['kelas']) {
-        case 6:
-            $score += 5;
-            break;
-        case 5:
-            $score += 4;
-            break;
-        case 4:
-            $score += 3;
-            break;
-        case 3:
-            $score += 2;
-            break;
-        case 2:
-            $score += 1;
-            break;
-        case 1:
-            $score += 0;
-            break;
-    }
-
     // OVR scoring
     if ($player['ovr'] >= 140 && $player['ovr'] <= 180) {
         $score += 2;
@@ -60,9 +38,9 @@ function calculateRecommendation($player) {
     }
 
     // Determine recommendation based on score
-    if ($score >= 8) {
+    if ($score >= 6) {
         return 'Upgrade';
-    } elseif ($score >= 6) {
+    } elseif ($score == 5) {
         return 'Hold';
     } else {
         return 'Sell';
@@ -92,7 +70,6 @@ foreach ($players as $player) {
                     <th class="text-left py-3 px-4">Umur</th>
                     <th class="text-left py-3 px-4">Keahlian</th>
                     <th class="text-left py-3 px-4">Gaya Main</th>
-                    <th class="text-left py-3 px-4">Kelas</th>
                     <th class="text-left py-3 px-4">OVR</th>
                     <th class="text-left py-3 px-4">Rekomendasi</th>
                 </tr>
@@ -104,7 +81,6 @@ foreach ($players as $player) {
                         <td class="py-2 px-4"><?= $rec['player']['umur'] ?></td>
                         <td class="py-2 px-4"><?= $rec['player']['keahlian'] ?></td>
                         <td class="py-2 px-4"><?= htmlspecialchars($rec['player']['gaya_main']) ?></td>
-                        <td class="py-2 px-4"><?= $rec['player']['kelas'] ?></td>
                         <td class="py-2 px-4"><?= $rec['player']['ovr'] ?></td>
                         <td class="py-2 px-4 font-semibold">
                             <?php

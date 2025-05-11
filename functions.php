@@ -7,15 +7,14 @@ function fetchPlayers(PDO $pdo): array {
 }
 
 function insertPlayer(PDO $pdo, array $data): void {
-    $stmt = $pdo->prepare('INSERT INTO players (nama, umur, ovr, posisi, keahlian, gaya_main, kelas) VALUES (?, ?, ?, ?, ?, ?, ?)');
+    $stmt = $pdo->prepare('INSERT INTO players (nama, umur, ovr, posisi, keahlian, gaya_main) VALUES (?, ?, ?, ?, ?, ?)');
     $stmt->execute([
         $data['nama'],
         $data['umur'],
         $data['ovr'],
         $data['posisi'],
         $data['keahlian'],
-        $data['gaya_main'],
-        $data['kelas']
+        $data['gaya_main']
     ]);
 }
 
@@ -48,11 +47,6 @@ function validatePlayerData(array $input): array {
 
     if (!in_array($input['gaya_main'] ?? '', ['Ada', 'Tidak Ada'])) {
         $errors[] = 'Gaya Main tidak valid.';
-    }
-
-    $kelas = intval($input['kelas'] ?? 0);
-    if ($kelas < 1 || $kelas > 6) {
-        $errors[] = 'Kelas harus antara 1 dan 6.';
     }
 
     return $errors;

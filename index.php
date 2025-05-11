@@ -13,22 +13,29 @@ $oldData = $_POST;
 if ($page === 'tambah-pemain' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $errors = validatePlayerData($_POST);
 
-    if (!$errors) {
-        // sanitize inputs before DB insert
-        $data = [
-            'nama' => trim($_POST['nama']),
-            'umur' => intval($_POST['umur']),
-            'ovr' => intval($_POST['ovr']),
-            'posisi' => $_POST['posisi'],
-            'keahlian' => intval($_POST['keahlian']),
-            'gaya_main' => $_POST['gaya_main'],
-            'kelas' => intval($_POST['kelas'])
-        ];
+    // Check current player count before adding new
+    $stmtCount = $pdo->query('SELECT COUNT(*) FROM players');
+    $currentCount = (int)$stmtCount->fetchColumn();
 
-        insertPlayer($pdo, $data);
-        $success = 'Pemain berhasil ditambahkan.';
-        
-        $oldData = [];
+    if ($currentCount >= 28) {
+        // Limit reached, do not add player
+        $errors[] = 'Batas maksimum pemain (28) telah tercapai. Tidak dapat menambahkan pemain baru.';
+    } else {
+        if (!$errors) {
+            // Sanitize inputs before DB insert
+            $data = [
+                'nama' => trim($_POST['nama']),
+                'umur' => intval($_POST['umur']),
+                'ovr' => intval($_POST['ovr']),
+                'posisi' => $_POST['posisi'],
+                'keahlian' => intval($_POST['keahlian']),
+                'gaya_main' => $_POST['gaya_main']
+            ];
+
+            insertPlayer($pdo, $data);
+            $success = 'Pemain berhasil ditambahkan.';
+            $oldData = [];
+        }
     }
 }
 
@@ -39,7 +46,7 @@ if ($page === 'pemain') {
             $action = $_POST['action'];
 
             if ($action === 'update') {
-                // collect, validate update data
+                // Collect, validate update data
                 $id = intval($_POST['id'] ?? 0);
                 $nama = trim($_POST['nama'] ?? '');
                 $umur = intval($_POST['umur'] ?? 0);
@@ -47,14 +54,13 @@ if ($page === 'pemain') {
                 $posisi = $_POST['posisi'] ?? '';
                 $keahlian = intval($_POST['keahlian'] ?? -1);
                 $gaya_main = $_POST['gaya_main'] ?? '';
-                $kelas = intval($_POST['kelas'] ?? 0);
 
-                $input = compact('nama', 'umur', 'ovr', 'posisi', 'keahlian', 'gaya_main', 'kelas');
+                $input = compact('nama', 'umur', 'ovr', 'posisi', 'keahlian', 'gaya_main');
                 $errors = validatePlayerData($input);
 
                 if (!$errors && $id > 0) {
-                    $stmt = $pdo->prepare('UPDATE players SET nama=?, umur=?, ovr=?, posisi=?, keahlian=?, gaya_main=?, kelas=? WHERE id=?');
-                    $stmt->execute([$nama, $umur, $ovr, $posisi, $keahlian, $gaya_main, $kelas, $id]);
+                    $stmt = $pdo->prepare('UPDATE players SET nama=?, umur=?, ovr=?, posisi=?, keahlian=?, gaya_main=? WHERE id=?');
+                    $stmt->execute([$nama, $umur, $ovr, $posisi, $keahlian, $gaya_main, $id]);
                     $success = 'Pemain berhasil diperbarui.';
                 }
 

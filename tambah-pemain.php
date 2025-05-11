@@ -9,7 +9,6 @@ function old($field) {
 $posisi_options = ['GK', 'DC', 'DL', 'DR', 'DMC', 'MC', 'MR', 'ML', 'AML', 'AMR', 'AMC', 'ST'];
 $keahlian_options = [0,1,2];
 $gaya_options = ['Ada', 'Tidak Ada'];
-$kelas_options = range(1,6);
 ?>
 
 <h1 class="text-4xl font-extrabold text-blue-700 mb-8 select-none text-center">Tambah Pemain</h1>
@@ -135,23 +134,6 @@ $kelas_options = range(1,6);
                 foreach ($gaya_options as $g) {
                     $sel = (old('gaya_main') === $g) ? 'selected' : '';
                     echo "<option value=\"$g\" $sel>$g</option>";
-                }
-            ?>
-        </select>
-    </div>
-
-    <div>
-        <label for="kelas" class="block mb-1 font-semibold text-blue-700">Kelas (1-6)</label>
-        <select
-            id="kelas"
-            name="kelas"
-            required
-            class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-        >
-            <?php
-                foreach (range(1,6) as $c) {
-                    $sel = (old('kelas') == $c) ? 'selected' : '';
-                    echo "<option value=\"$c\" $sel>$c</option>";
                 }
             ?>
         </select>

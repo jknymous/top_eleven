@@ -35,7 +35,8 @@
     <aside class="flex flex-col bg-white border-r border-gray-200 w-72 shadow-lg select-none">
         <div class="flex items-center justify-center h-20 border-b border-gray-200">
             <!-- Logo -->
-            <div class="text-3xl font-extrabold tracking-tight text-blue-700">FootballPro</div>
+            <!-- <div class="text-3xl font-extrabold tracking-tight text-blue-700">FootballPro</div> -->
+            <img src='top.png' class="w-auto h-16">
         </div>
 
         <nav class="flex-1 px-6 py-8 flex flex-col justify-between">

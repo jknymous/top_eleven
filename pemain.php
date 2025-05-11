@@ -4,7 +4,6 @@
 $posisi_options = ['GK', 'DC', 'DL', 'DR', 'DMC', 'MC', 'MR', 'ML', 'AML', 'AMR', 'AMC', 'ST'];
 $keahlian_options = [0,1,2];
 $gaya_options = ['Ada', 'Tidak Ada'];
-$kelas_options = range(1,6);
 ?>
 <h1 class="text-4xl font-extrabold text-blue-700 mb-6 select-none">Daftar Pemain</h1>
 
@@ -22,13 +21,12 @@ $kelas_options = range(1,6);
             <thead class="bg-gradient-to-r from-blue-500 to-blue-700 text-white">
                 <tr>
                     <th class="text-left py-3 px-4">No.</th>
+                    <th class="text-left py-3 px-4 cursor-pointer" data-column="posisi" data-order="asc">Posisi &#9650;</th>
                     <th class="text-left py-3 px-4">Nama</th>
-                    <th class="text-left py-3 px-4">Umur</th>
+                    <th class="text-left py-3 px-4 cursor-pointer" data-column="umur" data-order="asc">Umur &#9650;</th>
                     <th class="text-left py-3 px-4">OVR</th>
-                    <th class="text-left py-3 px-4">Posisi</th>
                     <th class="text-left py-3 px-4">Keahlian</th>
                     <th class="text-left py-3 px-4">Gaya Main</th>
-                    <th class="text-left py-3 px-4">Kelas</th>
                     <th class="text-left py-3 px-4">Aksi</th>
                 </tr>
             </thead>
@@ -36,13 +34,12 @@ $kelas_options = range(1,6);
                 <?php foreach ($players as $index => $player): ?>
                     <tr class="border-t border-gray-200 hover:bg-blue-50">
                         <td class="py-2 px-4"><?= $index + 1 ?></td>
+                        <td class="py-2 px-4"><?= $player['posisi'] ?></td>
                         <td class="py-2 px-4"><?= htmlspecialchars($player['nama']) ?></td>
                         <td class="py-2 px-4"><?= $player['umur'] ?></td>
                         <td class="py-2 px-4"><?= $player['ovr'] ?></td>
-                        <td class="py-2 px-4"><?= $player['posisi'] ?></td>
                         <td class="py-2 px-4"><?= $player['keahlian'] ?></td>
                         <td class="py-2 px-4"><?= $player['gaya_main'] ?></td>
-                        <td class="py-2 px-4"><?= $player['kelas'] ?></td>
                         <td class="py-2 px-4 space-x-2">
 
                             <button 
@@ -112,14 +109,6 @@ $kelas_options = range(1,6);
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div>
-                <label for="edit-kelas" class="block mb-1 font-semibold text-blue-700">Kelas (1-6)</label>
-                <select id="edit-kelas" name="kelas" required class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                    <?php foreach ($kelas_options as $c): ?>
-                        <option value="<?= $c ?>"><?= $c ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
             <div class="flex justify-end space-x-4 pt-4">
                 <button type="button" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400" onclick="closeEditModal()">Batal</button>
                 <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Simpan</button>
@@ -169,7 +158,6 @@ $kelas_options = range(1,6);
         document.getElementById('edit-posisi').value = player.posisi || '';
         document.getElementById('edit-keahlian').value = player.keahlian || '';
         document.getElementById('edit-gaya_main').value = player.gaya_main || '';
-        document.getElementById('edit-kelas').value = player.kelas || '';
     }
 
     function closeEditModal() {
@@ -215,4 +203,56 @@ $kelas_options = range(1,6);
         }
         hideDeleteConfirm();
     });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const table = document.querySelector('table');
+        const tbody = table.querySelector('tbody');
+        const headers = table.querySelectorAll('th[data-column]');
+
+    headers.forEach(header => {
+        header.addEventListener('click', () => {
+            const column = header.getAttribute('data-column');
+            let order = header.getAttribute('data-order');
+            order = order === 'asc' ? 'desc' : 'asc';
+            header.setAttribute('data-order', order);
+
+            // Update arrow
+            header.innerHTML = header.innerText.replace(/[\u25B2\u25BC]/g, '') + (order === 'asc' ? ' &#9650;' : ' &#9660;');
+
+            // Remove arrows from other headers
+            headers.forEach(h => {
+                if (h !== header) {
+                    h.setAttribute('data-order', 'asc');
+                    h.innerHTML = h.innerText.replace(/[\u25B2\u25BC]/g, '') + ' &#9650;';
+                }
+            });
+
+            // Get column index to sort by
+            const headerCells = Array.from(table.querySelectorAll('th'));
+            const columnIndex = headerCells.findIndex(th => th.getAttribute('data-column') === column);
+
+            // Sort rows
+            const rowsArray = Array.from(tbody.querySelectorAll('tr'));
+            rowsArray.sort((a,b) => {
+                let valA = a.cells[columnIndex].innerText.trim();
+                let valB = b.cells[columnIndex].innerText.trim();
+
+                // For 'Umur' column, compare as numbers
+                if(column === 'umur') {
+                    valA = Number(valA);
+                    valB = Number(valB);
+                    return order === 'asc' ? valA - valB : valB - valA;
+                } 
+                // For 'Posisi', compare as strings (localeCompare)
+                else if(column === 'posisi') {
+                    return order === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+                }
+                return 0;
+            });
+
+            // Append sorted rows
+            rowsArray.forEach(row => tbody.appendChild(row));
+        });
+    });
+});
 </script>
