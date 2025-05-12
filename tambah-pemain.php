@@ -6,7 +6,7 @@ function old($field) {
     return htmlspecialchars($oldData[$field] ?? '');
 }
 
-$posisi_options = ['GK', 'DC', 'DL', 'DR', 'DMC', 'MC', 'MR', 'ML', 'AML', 'AMR', 'AMC', 'ST'];
+$posisi_options = ['GK', 'DC', 'DR', 'DL', 'DMC', 'MC', 'MR', 'ML', 'AMC', 'AMR', 'AML', 'ST'];
 $keahlian_options = [0,1,2];
 $gaya_options = ['Ada', 'Tidak Ada'];
 ?>
