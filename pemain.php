@@ -64,6 +64,7 @@ $gaya_options = ['Ada', 'Tidak Ada'];
     .circle-black {
         background-color: black; /* Tailwind red-500 */
     }
+    table:hover tbody tr:hover { background-color: rgba(59,130,246,0.1) !important; }
 </style>
 
 <h1 class="text-4xl font-extrabold text-blue-700 mb-6 select-none">Daftar Pemain</h1>
